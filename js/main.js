@@ -5,7 +5,6 @@ console.log('Sprint One - Omer Rafaeli')
 const MINE = 'mine'
 const EMPTY = 'empty'
 const MARKED = 'marked'
-const neighbors = []
 const btnMain = '😊'
 const btnDone = '😎'
 const btnMiss = '🤩'
@@ -21,6 +20,7 @@ var hintCounter = 3
 var gGameInterval
 var gTimeoutid
 var gBoard = []
+//var gCells = []
 var gLevel = [{ size: 4, mines: 2 }, { size: 8, mines: 12 }, { size: 12, mines: 30 }]
 
 var gIsGameOn
@@ -28,7 +28,7 @@ var gIsHintMode
 var gSizeSelected = null
 var isFirstClick = true
 var lifeCounter = 3
-var markedMinesCounter = 0 //according to board size
+var markedMinesCounter = 0
 var boardSizeIdx = 0
 
 function init() {
@@ -68,8 +68,6 @@ function hint(elHintBtn) {
     //elBtn.classList.add('glow') 
     console.log(gIsHintMode);
 }
-
-
 
 function createBoard(boardSize) {
     var board = []
@@ -142,31 +140,16 @@ function pauseTimer() {
 
 function cellClicked(elBtn, cellI, cellJ) {
     const cell = gBoard[cellI][cellJ]
-    
+    gCellCount--
     if (gIsGameOn === false) return
-    isWinner(gCellCount - 1, gLevel[boardSizeIdx].mines, cellI, cellJ)
+    isWinner(gCellCount, gLevel[boardSizeIdx].mines, cellI, cellJ)
     setMines(gLevel[boardSizeIdx].mines, cellI, cellJ)
-
-    var res = setMinesNegsCount(cellI, cellJ)
-    //console.log('res ', res)
-    cell.minesAroundCount = res.minesAroundCount
-    cell.emptyAroundCount = res.emptyAroundCount
-    cell.negs = res.currNegs
-
-    console.log('cell negs ', cell.negs);
-    //if (cell.minesAroundCount === 0) openAroundZero(cell.negs)
-
-    //Model
-    cell.isShown = true
-
-    //Dom
     if (cell.minesAroundCount !== 0) elBtn.innerText = gBoard[cellI][cellJ].minesAroundCount
     elBtn.classList.add('shown')
 
 
-    if (cell.isMine) {
-
-        lifeCounter--
+    if (cell.isMine) { 
+        lifeCounter--       
         if (lifeCounter === 0) {
             clearTimeout(gTimeoutid)
             pauseTimer()
@@ -199,17 +182,7 @@ function cellClicked(elBtn, cellI, cellJ) {
 
 
     }
-    gCellCount--
-}
-
-function isWinner(cellNum, mines, cellI, cellJ) {
-    console.log('cellNum ', cellNum);
-    if (cellNum - mines === 0) {
-        pauseTimer()
-        gElRstBtn.innerText = btnDone
-        gIsGameOn = false        
-        endGame(cellI, cellJ)
-    } else return
+    openNegs(cellI, cellJ)
 }
 
 function setMinesNegsCount(cellI, cellJ) {
@@ -223,6 +196,7 @@ function setMinesNegsCount(cellI, cellJ) {
             if (i === cellI && j === cellJ) continue
             if (gBoard[i][j].type === MINE) minesAroundCount++
             if (gBoard[i][j].type === EMPTY) emptyAroundCount++
+
 
             currNegs.push({ i, j })
         }
@@ -242,45 +216,23 @@ function reziseBoard(elBtn, idx) {
 
     if (gSizeSelected) {
         gSizeSelected.classList.add('selected')
+        init()
     }
 
 
 }
 
-// function openAroundZero(neighbor) {
-//     //console.log('neighbor.length', neighbor.length)
-//     //console.log('open around is on');  
-
-//     for (var n = 0; n < neighbor.length; n++) {
-
-//         //console.log('neighbors[n] ', neighbor[n])
-//         var i = [neighbor[n].i]
-//         var j = [neighbor[n].j]
-//         var res = setMinesNegsCount(i, j)
-
-//         const cell = gBoard[i][j]
-//         cell.minesAroundCount = res.minesAroundCount
-//         cell.emptyAroundCount = res.emptyAroundCount
-//         cell.negs = res.currNegs
-
-//         if (gBoard[i][j].type === EMPTY) {
-//             //Model
-//             gBoard[i][j].isShown = true
-//             //Dom
-//             var elneighbor = document.querySelector(`#cell-${i}-${j}`)
-//             elneighbor.classList.add('shown')
-
-
-//            if (cell.minesAroundCount !== 0) elneighbor.innerText = cell.minesAroundCount
-
-//             //console.log('neighbors ', neighbors)
-//         }
-//         //console.log('neighbors ', neighbors)
-//     }
-//     //neighbors.splice(0, neighbors.length)
-
-
-// }
+function isWinner(cellNum, mines, cellI, cellJ) {
+    console.log('cellNum ', cellNum)
+    console.log('mines:', mines)
+    
+    if (cellNum - mines === 0) {
+        pauseTimer()
+        gElRstBtn.innerText = btnDone
+        gIsGameOn = false
+        endGame(cellI, cellJ)
+    } else return
+}
 
 function cellRightClicked(elBtn) {
     if (gIsGameOn === false) return
@@ -326,7 +278,7 @@ function setMines(minesNumber, cellI, cellJ) {
         cellCounter++
         console.log('gBoard ', i, j);
     }
-
+    createCell()
     isFirstClick = false
 }
 
@@ -358,18 +310,54 @@ function endGame(cellI, cellJ) {
             }
 
         }
-    } else if((gCellCount - 1) - gLevel[boardSizeIdx].mines >= 0){
-        debugger
-        var cell = gBoard[cellI][cellJ]        
-    console.log('cellI, cellJ:', cellI, cellJ);
+    } else if ((gCellCount) - gLevel[boardSizeIdx].mines >= 0) {
+        var cell = gBoard[cellI][cellJ]
+        console.log('cellI, cellJ:', cellI, cellJ);
         //Model
         cell.isShown = true
 
         //Dom
         var elCell = document.querySelector(`#cell-${cellI}-${cellJ}`)
-        console.log(elCell);
-       if(cell.minesAroundCount !== 0) elCell.innerText = cell.minesAroundCount
+        //console.log(elCell);
+        if (cell.minesAroundCount !== 0) elCell.innerText = cell.minesAroundCount
         elCell.classList.add('shown')
     }
 }
 
+function createCell() {
+    for (var i = 0; i < gBoard.length; i++) {
+        for (var j = 0; j < gBoard[0].length; j++) {
+            var res = setMinesNegsCount(i, j)
+            gBoard[i][j].minesAroundCount = res.minesAroundCount
+            gBoard[i][j].emptyAroundCount = res.emptyAroundCount
+            gBoard[i][j].currNegs = res.currNegs
+            console.log(gBoard[i][j].currNegs);
+        }
+    }
+
+    //console.table(gBoard);
+}
+
+//opens all neighbors of clicked 
+function openNegs(negI, negJ) {
+    const neighbors = gBoard[negI][negJ].currNegs
+    if (gBoard[negI][negJ].minesAroundCount !== 0 || gIsGameOn === false) return
+    for (var n = 0; n < neighbors.length; n++) {
+        var i = neighbors[n].i
+        var j = neighbors[n].j
+        if (gBoard[i][j].type === EMPTY && gBoard[i][j].isShown === false) {
+            var cell = gBoard[i][j]
+            //Model
+            cell.isShown = true
+            //Dom
+            var elCell = document.querySelector(`#cell-${i}-${j}`)
+            if (cell.minesAroundCount !== 0) elCell.innerText = cell.minesAroundCount
+            elCell.classList.add('shown')
+
+            console.log(gCellCount);
+            isWinner(gCellCount, gLevel[boardSizeIdx].mines)
+            gCellCount--
+        }
+        
+    }
+}
