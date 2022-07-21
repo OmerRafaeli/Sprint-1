@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MineSweeper Omer Rafaeli</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+
+<body onload="init()">
+
+    <div class="minesweeper" oncontextmenu="return false;">
+        <h1>My mineSweeper!</h1>
+        <button class="sizeBtn" onclick="reziseBoard(this, 0)">Beginner</button>
+        <button class="sizeBtn" onclick="reziseBoard(this, 1)">Medium</button>
+        <button class="sizeBtn" onclick="reziseBoard(this, 2)">Expert</button><br>
+
+        <div class="info">
+            <span class="mines-left">Left</span>
+            <button class="reset" onclick="init()">?</button>
+            <span class="timer">Time</span>
+        </div>
+
+        <table>
+            <tbody class="game-container">
+
+            </tbody>
+        </table>
+
+
+        <Img onclick="hint(this)"  src="img/3hints.png" />
+        <p class="lives"> </p>
+
+    </div>
+
+    <!-- <script src="js/utils.js"></script> -->
+    <script src="js/main.js"></script>
+</body>
+
+</html>
