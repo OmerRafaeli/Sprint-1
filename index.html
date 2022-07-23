@@ -13,9 +13,18 @@
 
     <div class="minesweeper" oncontextmenu="return false;">
         <h1>MineSweeper</h1>
-        <button class="sizeBtn" onclick="reziseBoard(this, 0)">Beginner</button>
-        <button class="sizeBtn" onclick="reziseBoard(this, 1)">Medium</button>
-        <button class="sizeBtn" onclick="reziseBoard(this, 2)">Expert</button><br>
+
+        <button class="board-size-btns" onclick="reziseBoard(this, 0)">Beginner</button>
+        <button class="board-size-btns" onclick="reziseBoard(this, 1)">Medium</button>
+        <button class="board-size-btns" onclick="reziseBoard(this, 2)">Expert</button><br>
+
+        <h2>Game Modes</h2>
+
+        <button class="game-mods sevenBoom" onclick="sevenBoomInit(this,)">7 BOOM!</button>
+        <button class="game-mods lay-mines" onclick="layMinesInit(this)">Set Mines</button>
+
+
+
 
         <div class="info">
             <span class="mines-left">Left</span>
@@ -29,9 +38,10 @@
             </tbody>
         </table>
 
-
-        <Img onclick="hint(this)"  src="img/3hints.png" />
+        <button class="safe-click" onclick="safeClick(this)">Safe Click: 3</button>
+        <Img class="hints coming-soon" onclick="/*hint(this)*/" src="img/3hints.png" />
         <p class="lives"> </p>
+        <button class="undo coming-soon" onclick="/*undo()*/">UNDO 🔄</button>
 
     </div>
 
